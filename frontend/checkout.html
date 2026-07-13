@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Bookstore</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-book-open"></i> Bookstore
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="books.html">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            <span class="badge" id="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto" id="auth-links">
+                    <!-- Populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Checkout Section -->
+    <div class="container my-5">
+        <h2 class="section-title">Checkout</h2>
+        <div class="divider"></div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-4">Shipping Information</h4>
+                        
+                        <form id="checkoutForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone_number" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone_number" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address *</label>
+                                <input type="text" class="form-control" id="address" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="province" class="form-label">Province *</label>
+                                    <select class="form-select" id="province" onchange="loadCities()" required>
+                                        <option value="">Select Province</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">City *</label>
+                                    <select class="form-select" id="city" required disabled>
+                                        <option value="">Select Province First</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Order Notes (Optional)</label>
+                                <textarea class="form-control" id="notes" rows="3" 
+                                          placeholder="Any special instructions?"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="order-summary">
+                    <h4>Order Summary</h4>
+                    <div id="orderItems" class="mb-3">
+                        <!-- Order items will be loaded here -->
+                    </div>
+                    <hr>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">${formatCurrency(0)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax (10%):</span>
+                        <span id="tax">${formatCurrency(0)}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">${formatCurrency(0)}</span>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-3" onclick="submitOrder()">
+                        <i class="fas fa-check-circle"></i> Place Order
+                    </button>
+                    <a href="cart.html" class="btn btn-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-left"></i> Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2025 Bookstore. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/pakistan-data.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api.js"></script>
+    
+    <script>
+        // Check authentication
+        if (!requireAuth()) {
+            // Will redirect to login
+        }
+        
+        let cartData = null;
+        
+        // Load provinces on page load
+        function initProvinces() {
+            const provinceSelect = document.getElementById('province');
+            Object.keys(PAKISTAN_DATA).forEach(province => {
+                const option = document.createElement('option');
+                option.value = province;
+                option.textContent = province;
+                provinceSelect.appendChild(option);
+            });
+        }
+        
+        // Load cities when province is selected
+        function loadCities() {
+            const province = document.getElementById('province').value;
+            const citySelect = document.getElementById('city');
+            
+            // Clear current cities
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            
+            if (province && PAKISTAN_DATA[province]) {
+                citySelect.disabled = false;
+                PAKISTAN_DATA[province].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            } else {
+                citySelect.disabled = true;
+                citySelect.innerHTML = '<option value="">Select Province First</option>';
+            }
+        }
+        
+        // Initialize provinces
+        initProvinces();
+        
+        // Load cart summary
+        async function loadCartSummary() {
+            try {
+                const response = await getCart();
+                const items = response.cart || [];
+                
+                if (!items || items.length === 0) {
+                    showToast('Your cart is empty', 'warning');
+                    setTimeout(() => redirectTo('cart.html'), 1500);
+                    return;
+                }
+                
+                // Calculate totals
+                const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+                const tax = subtotal * 0.0; // No tax for now
+                const total = subtotal + tax;
+                
+                cartData = { items, subtotal, tax, total };
+                
+                // Display order items
+                document.getElementById('orderItems').innerHTML = items.map(item => `
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>${item.book?.title || 'Unknown'} (x${item.quantity})</span>
+                        <span>${formatCurrency(item.subtotal)}</span>
+                    </div>
+                `).join('');
+                
+                // Update summary
+                document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+                document.getElementById('tax').textContent = formatCurrency(tax);
+                document.getElementById('total').textContent = formatCurrency(total);
+                
+                // Pre-fill user data if available
+                const user = getUserData();
+                if (user) {
+                    document.getElementById('name').value = user.name || '';
+                    document.getElementById('phone_number').value = user.phone_number || '';
+                    document.getElementById('address').value = user.address || '';
+                    
+                    // Set province first
+                    if (user.province) {
+                        document.getElementById('province').value = user.province;
+                        // Trigger loadCities to populate cities
+                        loadCities();
+                        // Then set city after cities are loaded
+                        setTimeout(() => {
+                            if (user.city) {
+                                document.getElementById('city').value = user.city;
+                            }
+                        }, 100);
+                    }
+                }
+                
+            } catch (error) {
+                showToast('Error loading cart', 'danger');
+                setTimeout(() => redirectTo('cart.html'), 1500);
+            }
+        }
+        
+        // Submit order
+        async function submitOrder() {
+            const form = document.getElementById('checkoutForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const orderData = {
+                name: document.getElementById('name').value,
+                phone_number: document.getElementById('phone_number').value,
+                shipping_address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                province: document.getElementById('province').value,
+                notes: document.getElementById('notes').value || null
+            };
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                const response = await placeOrder(orderData);
+                showToast('Order placed successfully!', 'success');
+                
+                // Redirect to orders page
+                setTimeout(() => {
+                    redirectTo('orders.html');
+                }, 1500);
+                
+            } catch (error) {
+                showToast(error.message || 'Failed to place order', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+            }
+        }
+        
+        // Initialize
+        loadCartSummary();
+    </script>
+</body>
+</html>

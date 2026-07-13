@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Books - Bookstore</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-book-open"></i> Bookstore
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="books.html">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            <span class="badge" id="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto" id="auth-links">
+                    <!-- Populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Books Section -->
+    <div class="container my-5">
+        <h2 class="section-title">Browse Books</h2>
+        <div class="divider"></div>
+        
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-md-3">
+                <div class="filters-sidebar">
+                    <h5><i class="fas fa-filter"></i> Filters</h5>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Author</label>
+                        <select class="form-select" id="authorFilter">
+                            <option value="">All Authors</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Min Price</label>
+                        <input type="number" class="form-control" id="minPrice" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Max Price</label>
+                        <input type="number" class="form-control" id="maxPrice" placeholder="100.00" min="0" step="0.01">
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    
+                    <button class="btn btn-secondary w-100 mt-2" onclick="clearFilters()">
+                        <i class="fas fa-undo"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Books Grid -->
+            <div class="col-md-9">
+                <div id="booksContainer" class="row">
+                    <!-- Books will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2025 Bookstore. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api.js"></script>
+    
+    <script>
+        let categories = [];
+        let authors = [];
+        
+        // Load initial data
+        async function init() {
+            await loadCategories();
+            await loadAuthors();
+            await loadBooks();
+        }
+        
+        // Load categories
+        async function loadCategories() {
+            try {
+                const response = await getCategories();
+                const categoryList = response.data || [];
+                categories = categoryList;
+                const select = document.getElementById('categoryFilter');
+                categoryList.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.category_type;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Load authors
+        async function loadAuthors() {
+            try {
+                const response = await getAuthors();
+                const authorList = response.data || [];
+                authors = authorList;
+                const select = document.getElementById('authorFilter');
+                authorList.forEach(author => {
+                    const option = document.createElement('option');
+                    option.value = author.id;
+                    option.textContent = author.author_name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading authors:', error);
+            }
+        }
+        
+        // Load books with filters
+        async function loadBooks() {
+            const container = document.getElementById('booksContainer');
+            showLoading('booksContainer');
+            
+            try {
+                const filters = {
+                    category_id: document.getElementById('categoryFilter').value || null,
+                    author_id: document.getElementById('authorFilter').value || null,
+                    min_price: document.getElementById('minPrice').value || null,
+                    max_price: document.getElementById('maxPrice').value || null
+                };
+                
+                const response = await getBooks(filters);
+                const books = response.books || [];
+                
+                if (books.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="fas fa-book"></i>
+                                <h4>No books found</h4>
+                                <p>Try adjusting your filters</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = books.map(book => `
+                    <div class="col-md-4 mb-4">
+                        <div class="book-card">
+                            <img src="${book.image_url || 'assets/images/placeholder-book.svg'}" 
+                                 class="card-img-top" alt="${book.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${book.title}</h5>
+                                <p class="author">${book.author?.name || 'Unknown Author'}</p>
+                                <div class="rating mb-2">
+                                    ${renderStars(book.average_rating || 0)}
+                                    <span class="text-muted ms-1">(${book.review_count || 0})</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="price">${formatCurrency(book.price)}</span>
+                                    <button class="btn btn-primary btn-sm" onclick="handleAddToCart('${book.id}')">
+                                        <i class="fas fa-cart-plus"></i> Add
+                                    </button>
+                                </div>
+                                <a href="book-detail.html?id=${book.id}" class="btn btn-accent btn-sm w-100 mt-2">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                showToast('Error loading books', 'danger');
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">Error loading books. Please try again.</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Add to cart
+        async function handleAddToCart(bookId) {
+            if (!isLoggedIn()) {
+                showToast('Please login to add items to cart', 'warning');
+                setTimeout(() => redirectTo('login.html'), 1500);
+                return;
+            }
+            
+            try {
+                await addToCart(bookId, 1);
+                showToast('Book added to cart!', 'success');
+                updateCartBadge();
+            } catch (error) {
+                showToast(error.message || 'Failed to add to cart', 'danger');
+            }
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            loadBooks();
+        }
+        
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('authorFilter').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            loadBooks();
+        }
+        
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>

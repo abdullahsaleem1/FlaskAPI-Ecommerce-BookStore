@@ -1,0 +1,3177 @@
+{
+  "info": {
+    "_postman_id": "e29fceed-ad11-4df2-8140-b47885f5dfc5",
+    "name": "FlaskAPI Collection",
+    "description": "A comprehensive collection for the Flask Bookstore API. This API provides endpoints for user authentication, book management, shopping cart, orders, reviews, and administrative functions.\n\n## Authentication\nMost endpoints require JWT authentication. Use the `/api/v1/auth/login` endpoint to obtain access and refresh tokens.\n\n## Base URL\nSet the `{{base_url}}` variable to your API server address (e.g., `http://localhost:5000`).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "cac434b7-4040-4838-b3ce-e2eda40f753c",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has success message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('registered');",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains user data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "    pm.expect(jsonData.user).to.have.property('username');",
+                  "    pm.expect(jsonData.user).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "1935bbfd-7031-4222-8970-87a50dc291a1",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "b1a938c3-2804-4eac-a2be-5dfb31e99e90",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"anas11\",\n    \"name\": \"anas ali\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"phone_number\": \"12345678901\",\n    \"address\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"province\": \"NY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user account. Username must be 3-20 alphanumeric characters. Password must be at least 6 characters with at least one letter and one number."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains tokens\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('access_token');",
+                  "    pm.expect(jsonData).to.have.property('refresh_token');",
+                  "});",
+                  "",
+                  "// Save tokens to environment variables",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+                  "    console.log(\"Tokens saved to environment\");",
+                  "}",
+                  "",
+                  "pm.test(\"Response time is less than 1000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "7748e7f2-0736-4b27-9794-4cd2aec3f9c5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with username/email and password. Returns access_token and refresh_token for authenticated requests."
+          },
+          "response": [
+            {
+              "id": "685036ad-0f3c-40d0-80cf-346d544cfb2c",
+              "name": "Login Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"username\": \"johndoe\",\n    \"email\": \"john@example.com\",\n    \"name\": \"John Doe\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains new access token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('access_token');",
+                  "});",
+                  "",
+                  "// Update access token in environment",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "    console.log(\"Access token refreshed\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "07b0b770-4139-45e1-bdaa-71600669cc7a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{refresh_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Refresh the access token using a valid refresh token."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User data structure is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "});",
+                  "",
+                  "pm.test(\"Email format is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "c8e73798-0200-4c76-93bb-143deee61790",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get the currently authenticated user's profile information."
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "id": "55b1642c-5885-4287-9865-d69bb25d3e3b",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"password123\",\n  \"new_password\": \"newpassword456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/change-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "change-password"
+              ]
+            },
+            "description": "Change the current user's password. Requires the old password for verification."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "id": "699307d6-17d4-4739-9dd1-d632038be02f",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"phone_number\": \"12345678901\",\n  \"address\": \"456 New St\",\n  \"city\": \"Los Angeles\",\n  \"province\": \"CA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
+            "description": "Update the current user's profile information."
+          },
+          "response": []
+        }
+      ],
+      "id": "7661a393-f655-486f-a49e-bf264cb1f1de",
+      "description": "Authentication endpoints for user registration, login, and profile management"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Users have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('id');",
+                  "        pm.expect(jsonData[0]).to.have.property('username');",
+                  "        pm.expect(jsonData[0]).to.have.property('email');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "c827ef65-6574-4ca7-bb4b-1a341ea5565e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Retrieve a list of all users."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User object structure is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('object');",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "f3dee086-f14c-4e09-be6d-dbeedb9796e1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Get a specific user by their ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"User created successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "});",
+                  "",
+                  "// Save created user ID for subsequent requests",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"created_user_id\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "3a3f80b1-22d4-4d3e-bdbd-da8d482a8b25",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Create a new user."
+          },
+          "response": [
+            {
+              "id": "0c9e18da-54ec-4573-bc53-7ed9fd03b353",
+              "name": "Create User Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"username\": \"newuser\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"created_at\": \"2025-12-18T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User updated successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "ea165ea5-7df7-4700-8579-4efca7b07928",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Update an existing user's information."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});",
+                  "",
+                  "pm.test(\"User deleted successfully\", function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('message');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "ab2fcda0-381e-4b34-b7b3-214690a3a18e",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Delete a user by their ID."
+          },
+          "response": []
+        }
+      ],
+      "id": "89b6beff-6909-4444-a8a8-6a7e5b248a9d",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Books have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('id');",
+                  "        pm.expect(jsonData[0]).to.have.property('title');",
+                  "        pm.expect(jsonData[0]).to.have.property('price');",
+                  "        pm.expect(jsonData[0]).to.have.property('isbn');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Price is a number\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0].price).to.be.a('number');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "d4f35eea-e188-47c2-981b-5487a3124477",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books?category_id=&author_id=&min_price=&max_price=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "",
+                  "description": "Filter by category ID"
+                },
+                {
+                  "key": "author_id",
+                  "value": "",
+                  "description": "Filter by author ID"
+                },
+                {
+                  "key": "min_price",
+                  "value": "",
+                  "description": "Minimum price filter"
+                },
+                {
+                  "key": "max_price",
+                  "value": "",
+                  "description": "Maximum price filter"
+                }
+              ]
+            },
+            "description": "Get all books with optional filters for category, author, and price range."
+          },
+          "response": [
+            {
+              "id": "1e5442c6-abe8-4aca-9b0a-942f9debc31d",
+              "name": "Get All Books Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/books",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n    \"title\": \"The Great Gatsby\",\n    \"isbn\": \"978-0-7432-7356-5\",\n    \"price\": 15.99,\n    \"stock_quantity\": 50,\n    \"description\": \"A classic American novel\",\n    \"author_id\": \"880e8400-e29b-41d4-a716-446655440003\",\n    \"author_name\": \"F. Scott Fitzgerald\",\n    \"category_id\": \"990e8400-e29b-41d4-a716-446655440004\",\n    \"category_type\": \"Fiction\"\n  },\n  {\n    \"id\": \"770e8400-e29b-41d4-a716-446655440005\",\n    \"title\": \"Clean Code\",\n    \"isbn\": \"978-0-1323-5088-4\",\n    \"price\": 42.99,\n    \"stock_quantity\": 30,\n    \"description\": \"A handbook of agile software craftsmanship\",\n    \"author_id\": \"880e8400-e29b-41d4-a716-446655440006\",\n    \"author_name\": \"Robert C. Martin\",\n    \"category_id\": \"990e8400-e29b-41d4-a716-446655440007\",\n    \"category_type\": \"Technology\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Book by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Book object structure is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('object');",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('price');",
+                  "    pm.expect(jsonData).to.have.property('isbn');",
+                  "    pm.expect(jsonData).to.have.property('author_name');",
+                  "    pm.expect(jsonData).to.have.property('category_type');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "a5d995ce-366a-49c8-9117-f3871d6ee74f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific book."
+          },
+          "response": [
+            {
+              "id": "b24ce94f-70ed-4c98-8a65-14d51e926d3b",
+              "name": "Get Book by ID Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/books/770e8400-e29b-41d4-a716-446655440002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "770e8400-e29b-41d4-a716-446655440002"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n  \"title\": \"The Great Gatsby\",\n  \"isbn\": \"978-0-7432-7356-5\",\n  \"price\": 15.99,\n  \"stock_quantity\": 50,\n  \"description\": \"A classic American novel set in the Jazz Age\",\n  \"author_id\": \"880e8400-e29b-41d4-a716-446655440003\",\n  \"author_name\": \"F. Scott Fitzgerald\",\n  \"category_id\": \"990e8400-e29b-41d4-a716-446655440004\",\n  \"category_type\": \"Fiction\",\n  \"average_rating\": 4.5,\n  \"review_count\": 127\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Book (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Book created successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "});",
+                  "",
+                  "// Save created book ID",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"created_book_id\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "4df945a8-9b12-4469-8dfe-716ebc9f3030",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/books",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ]
+            },
+            "description": "Create a new book. Requires admin access."
+          },
+          "response": [
+            {
+              "id": "498cba62-aa1f-474b-8d16-9629e9834e91",
+              "name": "Create Book Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/books",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"770e8400-e29b-41d4-a716-446655440010\",\n  \"title\": \"The Great Book\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 29.99,\n  \"stock_quantity\": 100,\n  \"description\": \"An amazing book about programming\",\n  \"author_id\": \"author-uuid-here\",\n  \"category_id\": \"category-uuid-here\",\n  \"created_at\": \"2025-12-18T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Book (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Book updated successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "85bfdc89-4a15-4f7b-81be-331506f8f97e",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"price\": 34.99,\n  \"stock_quantity\": 150\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Update an existing book. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Book (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "62251bf3-3ab1-4cdf-904c-e167fe7c683c",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Delete a book. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Book Review",
+          "id": "209899c9-9268-498a-879f-f349c91491b2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excellent book! Highly recommended.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id",
+                "reviews"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Add a review to a book. Rating must be between 1 and 5."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book Reviews",
+          "id": "37ba94f6-2afb-405a-8459-52aac7ea8abc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/books/:book_id/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                ":book_id",
+                "reviews"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get all reviews for a specific book."
+          },
+          "response": []
+        }
+      ],
+      "id": "64eb0919-86fd-485d-9b87-589b06d6ba9b",
+      "description": "Book management endpoints. Public endpoints for browsing, admin-only for CRUD operations."
+    },
+    {
+      "name": "Authors",
+      "item": [
+        {
+          "name": "Get All Authors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "fb44b9b7-1acd-48bb-bb1f-0be090cc1595",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors"
+              ]
+            },
+            "description": "Get a list of all authors."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Author by Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Author object is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('author_name');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "5b673e46-e367-4925-b2a1-703624715ca9",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific author."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Author (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "4b8c67ad-e2fa-42bd-abb7-555b4fc9f88b",
+                "exec": [
+                  "// Visualization Script",
+                  "// Visualization Script",
+                  "const template = `",
+                  "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto;\">",
+                  "    <div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0;\">",
+                  "        <h2 style=\"margin: 0; font-size: 24px;\">✓ Author Created Successfully</h2>",
+                  "    </div>",
+                  "    <div style=\"background: #f8f9fa; padding: 20px; border: 1px solid #e0e0e0; border-radius: 0 0 8px 8px;\">",
+                  "        <table style=\"width: 100%; border-collapse: collapse;\">",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057; width: 40%;\">Author ID</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.id}}</td>",
+                  "            </tr>",
+                  "            {{#if author.author_name}}",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Author Name</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.author_name}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "            {{#if author.created_at}}",
+                  "            <tr style=\"border-bottom: 1px solid #dee2e6;\">",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Created At</td>",
+                  "                <td style=\"padding: 12px; color: #212529;\">{{author.created_at}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "            {{#if author.message}}",
+                  "            <tr>",
+                  "                <td style=\"padding: 12px; font-weight: bold; color: #495057;\">Message</td>",
+                  "                <td style=\"padding: 12px; color: #28a745;\">{{author.message}}</td>",
+                  "            </tr>",
+                  "            {{/if}}",
+                  "        </table>",
+                  "    </div>",
+                  "</div>",
+                  "`;",
+                  "",
+                  "function createPayload() {",
+                  "    const responseData = pm.response.json();",
+                  "    return {",
+                  "        author: {",
+                  "            id: responseData.id || 'N/A',",
+                  "            author_name: responseData.author_name || responseData.name || null,",
+                  "            created_at: responseData.created_at || null,",
+                  "            message: responseData.message || null",
+                  "        }",
+                  "    };",
+                  "}",
+                  "",
+                  "pm.visualizer.set(template, createPayload());"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d797c838-381c-46e6-9a8a-2a25d3459431",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "32c4a126-e16f-43c1-be8a-81edca5f5fe1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author_name\": \"Allama Iqbal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors"
+              ]
+            },
+            "description": "Create a new author. Requires admin access."
+          },
+          "response": [
+            {
+              "id": "9849d2e8-2db5-48a5-9e38-5482c2716e59",
+              "name": "Create Author (Admin)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"author_name\": \"Anas Ali\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/authors",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "authors"
+                  ]
+                }
+              },
+              "status": "CREATED",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.4 Python/3.13.1"
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 26 Dec 2025 16:41:09 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "295"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "http://127.0.0.1:5500"
+                },
+                {
+                  "key": "Access-Control-Expose-Headers",
+                  "value": "Authorization, Content-Type"
+                },
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "responseTime": "2025-12-26T16:41:37.211Z",
+              "body": "{\n    \"data\": {\n        \"author_name\": \"Anas Ali\",\n        \"created_at\": \"2025-12-26T21:41:09.006462\",\n        \"created_by\": \"\",\n        \"deleted_at\": null,\n        \"id\": \"5ed717fc-48c0-476c-a2a7-59f3d023e673\",\n        \"is_active\": 1,\n        \"is_deleted\": false,\n        \"role\": 0,\n        \"updated_at\": \"2025-12-26T21:41:09.006472\"\n    },\n    \"message\": \"Author created successfully\",\n    \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Author (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "cdfa7f7d-c871-44f0-8713-565d14b09c6a",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author_name\": \"John Smith Jr.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
+            "description": "Update an existing author. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Author (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "36a73afb-1235-4cb4-b27e-b42dc104da1e",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/authors/:author_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "authors",
+                ":author_id"
+              ],
+              "variable": [
+                {
+                  "key": "author_id"
+                }
+              ]
+            },
+            "description": "Delete an author. Requires admin access."
+          },
+          "response": []
+        }
+      ],
+      "id": "f78bb42c-bd17-46b4-ad81-8d9b45a01e9c",
+      "description": "Author management endpoints"
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "9cfa48d2-0ff3-4d4f-bf77-f39f40c6e7c6",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Get a list of all book categories."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Category object is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('category_type');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "52cf7aca-0ab4-41a7-8439-8d09089c3fc4",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific category."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Category created successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "9c493ebf-f7fd-466f-bcf8-b755c4792034",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_type\": \"Fiction\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Create a new category. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "705dcf00-9ddd-4f58-b5ca-27d8bd5f3b54",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_type\": \"Science Fiction\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
+            "description": "Update an existing category. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "8283e6ec-af2b-48b2-bfc4-09d6673256c8",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/:category_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":category_id"
+              ],
+              "variable": [
+                {
+                  "key": "category_id"
+                }
+              ]
+            },
+            "description": "Delete a category. Requires admin access."
+          },
+          "response": []
+        }
+      ],
+      "id": "949f11cf-2450-482a-9ded-e1de48966f7c",
+      "description": "Category management endpoints"
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Cart structure is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('items');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Total is a number\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.total).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "2d52c485-f40c-4a09-8587-9e93fb951d2c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Get the current user's shopping cart with items and total."
+          },
+          "response": [
+            {
+              "id": "37df9264-06c0-49be-8f7d-b5ed6931a05d",
+              "name": "Get Cart Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/cart",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "cart"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"aa0e8400-e29b-41d4-a716-446655440020\",\n  \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"items\": [\n    {\n      \"id\": \"bb0e8400-e29b-41d4-a716-446655440021\",\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n      \"book_title\": \"The Great Gatsby\",\n      \"quantity\": 2,\n      \"price\": 15.99,\n      \"subtotal\": 31.98\n    },\n    {\n      \"id\": \"bb0e8400-e29b-41d4-a716-446655440022\",\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440005\",\n      \"book_title\": \"Clean Code\",\n      \"quantity\": 1,\n      \"price\": 42.99,\n      \"subtotal\": 42.99\n    }\n  ],\n  \"total\": 74.97,\n  \"item_count\": 3\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Item to Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Item added to cart\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('added');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "9f6f4168-a031-4965-94ea-4575a7d047a3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
+            "description": "Add a book to the shopping cart."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Cart item updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "b01de3d8-7d4b-4266-9a66-9a3f673a1251",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items/:cart_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                ":cart_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_item_id"
+                }
+              ]
+            },
+            "description": "Update the quantity of an item in the cart."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Item from Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "2934b05d-76b2-430a-997c-32a4d90b56ae",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart/items/:cart_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                ":cart_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_item_id"
+                }
+              ]
+            },
+            "description": "Remove a specific item from the cart."
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "f0478462-44e1-4b4b-9b68-e6f855ab9358",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Remove all items from the cart."
+          },
+          "response": []
+        }
+      ],
+      "id": "fcba2073-0439-4459-88b5-300c9042b795",
+      "description": "Shopping cart management endpoints. All endpoints require authentication."
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Checkout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Order created successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('order_id');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "});",
+                  "",
+                  "// Save order ID for subsequent requests",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"created_order_id\", jsonData.order_id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "a5bc902b-620d-4e0b-816a-da562a766444",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "checkout"
+              ]
+            },
+            "description": "Create an order from the current cart items."
+          },
+          "response": [
+            {
+              "id": "fb7284a0-c112-4ba8-a53e-cd5ec9931f2a",
+              "name": "Checkout Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/orders/checkout",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "orders",
+                    "checkout"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"order_id\": \"cc0e8400-e29b-41d4-a716-446655440030\",\n  \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"total\": 74.97,\n  \"status\": \"pending\",\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\",\n  \"created_at\": \"2025-12-18T10:00:00Z\",\n  \"items\": [\n    {\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n      \"book_title\": \"The Great Gatsby\",\n      \"quantity\": 2,\n      \"price\": 15.99\n    },\n    {\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440005\",\n      \"book_title\": \"Clean Code\",\n      \"quantity\": 1,\n      \"price\": 42.99\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Orders have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('order_id');",
+                  "        pm.expect(jsonData[0]).to.have.property('total');",
+                  "        pm.expect(jsonData[0]).to.have.property('status');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "74148abb-8fd6-4b7a-a093-16c5a97fe586",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ]
+            },
+            "description": "Get all orders for the current user."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Orders",
+          "id": "a4015604-1480-48ae-8b3a-09bceac63f9c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/recent?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "recent"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of recent orders to retrieve"
+                }
+              ]
+            },
+            "description": "Get recent orders for the current user."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Order object is valid\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('order_id');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('items');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "b7039306-92b1-49bf-981b-cf739aaee19b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Get details of a specific order."
+          },
+          "response": [
+            {
+              "id": "6407a618-2cec-42f3-a7fd-7ce15886ec8a",
+              "name": "Get Order by ID Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/orders/cc0e8400-e29b-41d4-a716-446655440030",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "orders",
+                    "cc0e8400-e29b-41d4-a716-446655440030"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"order_id\": \"cc0e8400-e29b-41d4-a716-446655440030\",\n  \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"total\": 74.97,\n  \"status\": \"shipped\",\n  \"shipping_address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"phone_number\": \"12345678901\",\n  \"tracking_number\": \"TRACK123456789\",\n  \"created_at\": \"2025-12-18T10:00:00Z\",\n  \"updated_at\": \"2025-12-18T12:00:00Z\",\n  \"items\": [\n    {\n      \"id\": \"dd0e8400-e29b-41d4-a716-446655440031\",\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n      \"book_title\": \"The Great Gatsby\",\n      \"quantity\": 2,\n      \"price\": 15.99,\n      \"subtotal\": 31.98\n    },\n    {\n      \"id\": \"dd0e8400-e29b-41d4-a716-446655440032\",\n      \"book_id\": \"770e8400-e29b-41d4-a716-446655440005\",\n      \"book_title\": \"Clean Code\",\n      \"quantity\": 1,\n      \"price\": 42.99,\n      \"subtotal\": 42.99\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Cancel Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Order cancelled successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('cancelled');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "f93100f3-8484-41f4-aa6f-7ed8042564a0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/:order_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                ":order_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Cancel an order."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Orders (Admin)",
+          "id": "9597cdf5-516b-4f48-889c-d4bb90b9e92d",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/orders?status=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by order status"
+                }
+              ]
+            },
+            "description": "Get all orders. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Order status updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "8b8e7bac-77d5-4e3d-830c-3e1b39bbe77f",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shipped\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/orders/:order_id/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders",
+                ":order_id",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Update the status of an order. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tracking Number (Admin)",
+          "id": "7f983595-f6be-470b-9234-8817b2c051b7",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tracking_number\": \"TRACK123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/orders/:order_id/tracking",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders",
+                ":order_id",
+                "tracking"
+              ],
+              "variable": [
+                {
+                  "key": "order_id"
+                }
+              ]
+            },
+            "description": "Update the tracking number for an order. Requires admin access."
+          },
+          "response": []
+        }
+      ],
+      "id": "338af96a-0db3-43e6-aa79-bafdb0027bd6",
+      "description": "Order management endpoints"
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get All Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "0b0695ef-2058-412e-a836-2e212976a71d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Get all reviews."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Review by ID",
+          "id": "7324df31-68ab-4bce-8441-3fad13485161",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
+            "description": "Get a specific review by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reviews by Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Reviews have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('id');",
+                  "        pm.expect(jsonData[0]).to.have.property('rating');",
+                  "        pm.expect(jsonData[0]).to.have.property('comment');",
+                  "        pm.expect(jsonData[0].rating).to.be.within(1, 5);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "6a166a98-344e-49e8-b0c3-fbb2b12c0816",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/book/:book_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "book",
+                ":book_id"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get all reviews for a specific book."
+          },
+          "response": [
+            {
+              "id": "ecccd7fd-f6af-476f-971a-29e68fcb7cb0",
+              "name": "Get Reviews by Book Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/reviews/book/770e8400-e29b-41d4-a716-446655440002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reviews",
+                    "book",
+                    "770e8400-e29b-41d4-a716-446655440002"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": \"ee0e8400-e29b-41d4-a716-446655440040\",\n    \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n    \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"username\": \"johndoe\",\n    \"rating\": 5,\n    \"comment\": \"Excellent book! Highly recommended.\",\n    \"created_at\": \"2025-12-15T10:00:00Z\"\n  },\n  {\n    \"id\": \"ee0e8400-e29b-41d4-a716-446655440041\",\n    \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n    \"user_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"username\": \"janedoe\",\n    \"rating\": 4,\n    \"comment\": \"Great read, very engaging.\",\n    \"created_at\": \"2025-12-16T14:30:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Book Rating Summary",
+          "id": "91ef8a25-e57f-4e65-82d7-1f1c5be87dfe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/book/:book_id/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "book",
+                ":book_id",
+                "summary"
+              ],
+              "variable": [
+                {
+                  "key": "book_id"
+                }
+              ]
+            },
+            "description": "Get rating summary for a book."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Reviews",
+          "id": "acfa1714-585d-4706-82f9-f726bebf97ed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/user/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "user",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Get all reviews by a user. Users can only view their own reviews unless admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Review created successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('rating');",
+                  "    pm.expect(jsonData.rating).to.be.within(1, 5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "7f14ed72-0aa5-459c-9109-6bce85896dd7",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Create a new review for a book."
+          },
+          "response": [
+            {
+              "id": "11f68ff0-69e7-4315-9d6b-e2e37ee7de10",
+              "name": "Create Review Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"book_id\": \"book-uuid-here\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/reviews/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reviews",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"ee0e8400-e29b-41d4-a716-446655440042\",\n  \"book_id\": \"770e8400-e29b-41d4-a716-446655440002\",\n  \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"rating\": 5,\n  \"comment\": \"Great book!\",\n  \"created_at\": \"2025-12-18T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Review updated successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "5a3e52a5-2d10-447c-9a22-2325c6b25eb3",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated review comment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
+            "description": "Update an existing review. Users can only update their own reviews."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 204\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "c4c1ceac-5c4c-4932-886d-798c43e69bf5",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reviews/:review_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                ":review_id"
+              ],
+              "variable": [
+                {
+                  "key": "review_id"
+                }
+              ]
+            },
+            "description": "Delete a review. Users can only delete their own reviews unless admin."
+          },
+          "response": []
+        }
+      ],
+      "id": "cdebdaef-8f6f-4aec-a64e-c4544fad4d9e",
+      "description": "Review management endpoints"
+    },
+    {
+      "name": "Cart History",
+      "item": [
+        {
+          "name": "Get All Cart History (Admin)",
+          "id": "8de50b33-68f2-4548-a11b-1ebb1362349c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                ""
+              ]
+            },
+            "description": "Get all cart history records. Requires admin access."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cart History by ID",
+          "id": "b2f76341-a910-4e07-a89e-1de81f6525f6",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/:cart_history_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                ":cart_history_id"
+              ],
+              "variable": [
+                {
+                  "key": "cart_history_id"
+                }
+              ]
+            },
+            "description": "Get a specific cart history record."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Cart History",
+          "id": "33729f74-07f1-4de3-abfc-ca7ecf0e7c58",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/user/:user_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                "user",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id"
+                }
+              ]
+            },
+            "description": "Get cart history for a specific user."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Item History (Admin)",
+          "id": "c849156e-b044-4d9c-9fb9-83d8bc7b7ed5",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cart-history/order-item/:order_item_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart-history",
+                "order-item",
+                ":order_item_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_item_id"
+                }
+              ]
+            },
+            "description": "Get cart history for an order item. Requires admin access."
+          },
+          "response": []
+        }
+      ],
+      "id": "7ecaeea7-529a-4bb3-8505-c4cb2e4a0723",
+      "description": "Cart history tracking endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection-level pre-request script",
+          "// This runs before every request in the collection",
+          "",
+          "// Log the request being made",
+          "console.log('Making request to: ' + pm.request.url);",
+          "",
+          "// Check if access token exists for authenticated requests",
+          "if (pm.request.headers.has('Authorization')) {",
+          "    const token = pm.environment.get('access_token');",
+          "    if (!token || token === '') {",
+          "        console.warn('Warning: Authorization header present but access_token is empty');",
+          "    }",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection-level test script",
+          "// This runs after every request in the collection",
+          "",
+          "// Log response time",
+          "console.log('Response time: ' + pm.response.responseTime + 'ms');",
+          "",
+          "// Check for common error responses",
+          "if (pm.response.code === 401) {",
+          "    console.error('Authentication failed - token may be expired');",
+          "} else if (pm.response.code === 403) {",
+          "    console.error('Access forbidden - insufficient permissions');",
+          "} else if (pm.response.code >= 500) {",
+          "    console.error('Server error occurred');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "b7e29ba9-93fe-4655-92aa-869601870af3",
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "id": "34bebd71-b1c1-431c-90cf-92f302c428f6",
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "d27ff6d7-610d-4a51-9fdb-0a5a596a7103",
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "0bc612ed-5840-475c-9005-a5bbe009b997",
+      "key": "created_user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "086da825-2c4d-41bf-a9fe-18d55edbd7ca",
+      "key": "created_book_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "db1993fe-820a-4e3c-a107-236aff1bcc8c",
+      "key": "created_order_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

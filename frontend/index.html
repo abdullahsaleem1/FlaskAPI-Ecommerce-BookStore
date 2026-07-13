@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookstore - Your Literary Haven</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-book-open"></i> Bookstore
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="books.html">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            <span class="badge" id="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto" id="auth-links">
+                    <!-- Populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1><i class="fas fa-book-reader"></i> Welcome to Your Literary Haven</h1>
+            <p>Discover thousands of books across all genres</p>
+            <a href="books.html" class="btn btn-accent btn-lg">
+                <i class="fas fa-search"></i> Browse Books
+            </a>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <div class="container my-5">
+        <h2 class="section-title">Featured Books</h2>
+        <div class="divider"></div>
+        
+        <div id="featuredBooks" class="row">
+            <!-- Featured books will be loaded here -->
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="books.html" class="btn btn-primary btn-lg">
+                <i class="fas fa-book"></i> View All Books
+            </a>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="container my-5">
+        <h2 class="section-title">Browse by Category</h2>
+        <div class="divider"></div>
+        
+        <div id="categoriesGrid" class="row">
+            <!-- Categories will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Why Choose Us Section -->
+    <div class="container my-5">
+        <h2 class="section-title">Why Choose Us</h2>
+        <div class="divider"></div>
+        
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-shipping-fast fa-3x mb-3" style="color: var(--accent);"></i>
+                        <h4>Fast Delivery</h4>
+                        <p>Quick and reliable shipping to your doorstep</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x mb-3" style="color: var(--accent);"></i>
+                        <h4>Secure Payment</h4>
+                        <p>Your transactions are safe and protected</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-headset fa-3x mb-3" style="color: var(--accent);"></i>
+                        <h4>24/7 Support</h4>
+                        <p>We're here to help anytime you need us</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-book-open"></i> Bookstore</h5>
+                    <p>Your one-stop destination for all your reading needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="books.html">Books</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="orders.html">Orders</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p>
+                        <i class="fas fa-envelope"></i> support@bookstore.com<br>
+                        <i class="fas fa-phone"></i> +1 (555) 123-4567
+                    </p>
+                </div>
+            </div>
+            <hr style="border-color: var(--accent);">
+            <div class="text-center">
+                <p>&copy; 2025 Bookstore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api.js"></script>
+    
+    <script>
+        // Load featured books (first 6)
+        async function loadFeaturedBooks() {
+            const container = document.getElementById('featuredBooks');
+            showLoading('featuredBooks');
+            
+            try {
+                const response = await getBooks();
+                const books = response.books || [];
+                const featured = books.slice(0, 6);
+                
+                container.innerHTML = featured.map(book => `
+                    <div class="col-md-4 mb-4">
+                        <div class="book-card">
+                            <img src="${book.image_url || 'assets/images/placeholder-book.svg'}" 
+                                 class="card-img-top" alt="${book.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${book.title}</h5>
+                                <p class="author">${book.author?.name || 'Unknown Author'}</p>
+                                <div class="rating mb-2">
+                                    ${renderStars(book.average_rating || 0)}
+                                    <span class="text-muted ms-1">(${book.review_count || 0})</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="price">${formatCurrency(book.price)}</span>
+                                    <button class="btn btn-primary btn-sm" onclick="handleAddToCart('${book.id}')">
+                                        <i class="fas fa-cart-plus"></i> Add
+                                    </button>
+                                </div>
+                                <a href="book-detail.html?id=${book.id}" class="btn btn-accent btn-sm w-100 mt-2">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading featured books:', error);
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">Unable to load featured books.</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load categories
+        async function loadCategories() {
+            const container = document.getElementById('categoriesGrid');
+            
+            try {
+                const response = await getCategories();
+                const categories = response.data || [];
+                
+                container.innerHTML = categories.slice(0, 6).map(cat => `
+                    <div class="col-md-4 mb-3">
+                        <a href="books.html" class="text-decoration-none">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-bookmark fa-3x mb-3" style="color: var(--primary);"></i>
+                                    <h5>${cat.category_type}</h5>
+                                    <p class="text-muted mb-0">Explore books</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Add to cart
+        async function handleAddToCart(bookId) {
+            if (!isLoggedIn()) {
+                showToast('Please login to add items to cart', 'warning');
+                setTimeout(() => redirectTo('login.html'), 1500);
+                return;
+            }
+            
+            try {
+                await addToCart(bookId, 1);
+                showToast('Book added to cart!', 'success');
+                updateCartBadge();
+            } catch (error) {
+                showToast(error.message || 'Failed to add to cart', 'danger');
+            }
+        }
+        
+        // Initialize
+        loadFeaturedBooks();
+        loadCategories();
+    </script>
+</body>
+</html>

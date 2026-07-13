@@ -1,0 +1,16 @@
+{
+  "workspace": {
+    "id": "dc1120de-e070-4245-8341-622517d833b9"
+  },
+  "entities": {
+    "collections": [
+      "../postman/collections/FlaskAPI Collection.postman_collection.json"
+    ],
+    "environments": [
+      "../postman/environments/FlaskAPI Local.postman_environment.json"
+    ],
+    "specs": [],
+    "flows": [],
+    "globals": []
+  }
+}
