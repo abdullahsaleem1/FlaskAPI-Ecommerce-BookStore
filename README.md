@@ -69,7 +69,7 @@ CREATE DATABASE flaskapi_db;
 Update `.env` file with your database credentials:
 
 ```env
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/flaskapi_db
+DATABASE_URL=postgresql+psycopg://postgres:YOUR_PASSWORD@localhost:5432/flaskapi_db
 SECRET_KEY=your-secret-key-change-in-production
 JWT_SECRET_KEY=jwt-secret-key-change-in-production
 ```
