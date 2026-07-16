@@ -19,8 +19,8 @@ services:
       - key: FLASK_ENV
         value: production
 
+databases:
   # PostgreSQL Database
-  - type: pgsql
-    name: flaskapi-db
+  - name: flaskapi-db
     databaseName: flaskapi
     user: flaskapi_user
