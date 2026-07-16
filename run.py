@@ -1,7 +1,13 @@
+import os
 from app import create_app
 from app.models import db
 
-app = create_app()
+# Use ProductionConfig on Vercel / any production environment
+if os.environ.get('VERCEL') or os.environ.get('FLASK_ENV') == 'production':
+    from config.production import ProductionConfig
+    app = create_app(ProductionConfig)
+else:
+    app = create_app()
 
 # Create database tables
 # Comment this out when using Flask-Migrate
