@@ -2,12 +2,18 @@ import os
 from app import create_app
 from app.models import db
 
-# Use ProductionConfig on Vercel / any production environment
+# ---------------------------------------------------------------------------
+# Vercel requires a top-level "app" variable to be present in this file.
+# We always create it here; the correct config is selected via env-vars.
+# ---------------------------------------------------------------------------
 if os.environ.get('VERCEL') or os.environ.get('FLASK_ENV') == 'production':
     from config.production import ProductionConfig
     app = create_app(ProductionConfig)
 else:
     app = create_app()
+
+# Expose as "application" as well (some WSGI servers look for this name)
+application = app
 
 # Create database tables
 # Comment this out when using Flask-Migrate
